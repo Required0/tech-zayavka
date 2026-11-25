@@ -1,0 +1,26 @@
+CREATE DATABASE IF NOT EXISTS tech_zayavki CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE tech_zayavki;
+
+CREATE TABLE IF NOT EXISTS users (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  full_name VARCHAR(120) NOT NULL,
+  phone VARCHAR(25) NOT NULL,
+  email VARCHAR(190) NOT NULL,
+  login VARCHAR(30) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  role ENUM('user','admin') NOT NULL DEFAULT 'user',
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS tickets (
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id INT UNSIGNED NOT NULL,
+  title VARCHAR(120) NOT NULL,
+  description TEXT NOT NULL,
+  status ENUM('Новая','В работе','Закрыта') NOT NULL DEFAULT 'Новая',
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_tickets_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  INDEX idx_tickets_user_created (user_id, created_at),
+  INDEX idx_tickets_status (status)
+) ENGINE=InnoDB;
